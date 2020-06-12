@@ -1,4 +1,7 @@
+import 'package:bitcoin_ticker/network.dart';
+
 const List<String> currenciesList = [
+  'USD',
   'AUD',
   'BRL',
   'CAD',
@@ -18,7 +21,6 @@ const List<String> currenciesList = [
   'RUB',
   'SEK',
   'SGD',
-  'USD',
   'ZAR'
 ];
 
@@ -28,4 +30,11 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-class CoinData {}
+class CoinData {
+  Future<double> getBTCData(String toCurrency) async {
+    NetworkService networkService = NetworkService();
+    double value = await networkService.getBTCValue(toCurrency: toCurrency);
+
+    return value;
+  }
+}
