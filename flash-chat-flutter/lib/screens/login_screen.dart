@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/components/material_padding_button.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flutter/material.dart';
+
+import 'chat_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static String routeNameKey = 'login_screen';
@@ -10,6 +13,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  String email, password;
+  final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,19 +26,22 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Hero(
-              tag: 'logo',
-              child: Container(
-                height: 200.0,
-                child: Image.asset('images/logo.png'),
+            Flexible(
+              child: Hero(
+                tag: 'logo',
+                child: Container(
+                  height: 200.0,
+                  child: Image.asset('images/logo.png'),
+                ),
               ),
             ),
             SizedBox(
               height: 48.0,
             ),
             TextField(
+              textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                email = value;
               },
               decoration: kInputTextFieldDecoration.copyWith(
                   hintText: 'Enter your email'),
@@ -41,8 +50,10 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 8.0,
             ),
             TextField(
+              obscureText: true,
+              textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                password = value;
               },
               decoration: kInputTextFieldDecoration.copyWith(
                   hintText: 'Enter your password.'),
@@ -52,7 +63,21 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             MaterialPaddingButton(
               backgroundColor: Colors.lightBlueAccent,
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  email = email.trim();
+                  print(email);
+                  print(password);
+                  final user = await _auth.signInWithEmailAndPassword(
+                      email: email, password: password);
+                  if (user != null) {
+                    Navigator.pushNamed(context, ChatScreen.routeNameKey);
+                  }
+                } catch (e) {
+                  print('PRINTING SIGN IN ERROR');
+                  print(e);
+                }
+              },
               buttonText: loginButtonText,
             ),
           ],
